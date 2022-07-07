@@ -1,10 +1,10 @@
-# TGBOT-skeleton  
+# Telegram bot skeleton  
 
 This is the minimum required functionality for building simple and complex telegram bots
 
 ## Getting started
 ### Installation
-The application doesn't require the installation of an additional environment and rises like a usual Spring Boot application.  
+The application doesn't require the installation of an additional environment and running like a usual Spring Boot application.  
 
 Environment variables must be set before installation
 
