@@ -1,50 +1,42 @@
 package com.tgbot.skeleton.domain.service;
 
 import com.tgbot.skeleton.domain.model.StoredMessage;
-import org.apache.commons.collections4.CollectionUtils;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 
-import static com.google.common.collect.Lists.newArrayList;
+public interface MessageService {
 
-@Service
-public class MessageService {
+    /**
+     * Save user to the system
+     *
+     * @param userId        - user if from telegram
+     * @param messageId     - message is from telegram
+     * @param isInteractive - whether the system expects a click on the proposed answer option
+     * @param botOwns       - true if this message is sent by a bot
+     */
+    void save(String userId, String messageId, boolean isInteractive, boolean botOwns);
 
-    // replace with necessary storage
-    private static final Map<String, List<StoredMessage>> TEMP_MESSAGES = new ConcurrentHashMap<>();
+    /**
+     * Find the last user message
+     *
+     * @param userId - user id
+     * @return last user message object
+     */
+    StoredMessage findLastUserMessage(String userId);
 
-    public void save(final String userId, final String messageId, final boolean isInteractive, final boolean botOwns) {
-        if (TEMP_MESSAGES.containsKey(userId)) {
-            TEMP_MESSAGES.get(userId).add(new StoredMessage(messageId, isInteractive, botOwns));
-        } else {
-            TEMP_MESSAGES.put(userId, newArrayList(new StoredMessage(messageId, isInteractive, botOwns)));
-        }
-    }
+    /**
+     * Find all user messages
+     *
+     * @param userId - user id
+     * @return list of user messages
+     */
+    List<String> findByUserId(String userId);
 
-    public StoredMessage findLastUserMessage(final String userId) {
-        final List<StoredMessage> storedMessages = TEMP_MESSAGES.get(userId);
-        if (CollectionUtils.isEmpty(storedMessages)) {
-            return null;
-        } else {
-            return storedMessages.get(storedMessages.size() - 1);
-        }
-    }
-
-    public List<String> findByUserId(final String userId) {
-        return TEMP_MESSAGES.getOrDefault(userId, newArrayList()).stream()
-                .map(StoredMessage::getMessageId)
-                .collect(Collectors.toList());
-    }
-
-    public void deleteByIds(final String userId, final List<String> messageIds) {
-        final List<StoredMessage> messages = TEMP_MESSAGES.getOrDefault(userId, newArrayList()).stream()
-                .filter(m -> !messageIds.contains(m.getMessageId())).
-                collect(Collectors.toList());
-
-        TEMP_MESSAGES.put(userId, messages);
-    }
+    /**
+     * Delete user messages by ids
+     *
+     * @param userId     - user id
+     * @param messageIds - message ids
+     */
+    void deleteByIds(String userId, List<String> messageIds);
 }
